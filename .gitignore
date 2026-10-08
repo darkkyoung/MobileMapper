@@ -1,0 +1,77 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+build/
+dist/
+out/
+artifacts/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Package / tool caches
+.nuget/
+packages/
+node_modules/
+.cache/
+.temp/
+tmp/
+
+# Logs / diagnostics
+*.log
+logs/
+crashdumps/
+*.dmp
+
+# Test / coverage outputs
+TestResults/
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+secrets/
+local.settings.json
+
+# Android / ADB local credentials
+adbkey
+adbkey.pub
+.android/
+
+# Local MobileMapper data
+.local/
+profiles/local/
+captures/
+recordings/
+
+# Generated installers / archives
+*.msi
+*.msix
+*.appx
+*.exe
+*.zip
+*.7z
+
+# Keep source-controlled third-party notices and manifests.
+# Do not blanket-ignore license files or lockfiles.
