@@ -68,6 +68,13 @@ Record decisions and important trade-offs in repository documentation.
 
 A proof of concept is allowed when it is needed to validate a risky technical assumption, but do not mistake a throwaway prototype for the final architecture.
 
+Phase 0 decisions are now recorded in `docs/ARCHITECTURE.md`; read it and
+`docs/PHASE0_RESEARCH.md` before implementation. Follow the selected WinUI 3 / .NET,
+native FFmpeg / D3D11, pinned scrcpy-server architecture unless new evidence requires
+an explicitly documented revision. `experiments/phase0` is an offline executable
+specification, not production code. Windows/Android acceptance and artifact-specific
+distribution gates remain open; passing offline tests does not close them.
+
 ### Later phases
 
 Once Phase 0 decisions are documented, implement according to the roadmap in `README.md`.

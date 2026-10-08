@@ -75,3 +75,11 @@ recordings/
 
 # Keep source-controlled third-party notices and manifests.
 # Do not blanket-ignore license files or lockfiles.
+
+# Phase 0 Python experiments
+__pycache__/
+*.py[cod]
+.venv/
+
+# ADB trust database (in addition to adbkey above)
+adb_known_hosts.pb

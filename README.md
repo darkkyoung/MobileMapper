@@ -141,23 +141,24 @@ Primary work:
 
 ## Architecture status
 
-The exact technology stack is **not yet locked**.
+Phase 0 selected **C# / .NET 10 + WinUI 3**, an app-owned **D3D11 SwapChainPanel**
+viewport, and a small **C++ / FFmpeg** media bridge. Wireless ADB manages pairing
+and discovery; a custom client talks to the pinned **scrcpy 5.0.1 server**. Input
+uses Win32 Raw Input and a shared touch allocator; profiles use versioned JSON
+with normalized content coordinates. Initial support target: Windows 11 x64 and
+Android 11+ Wireless Debugging.
 
-Phase 0 must compare and validate the major choices before the repository commits to a specific Windows UI framework, video decoder/rendering stack, scrcpy integration strategy, or packaging system.
+The architecture is documented, but the Windows/Android critical-path acceptance
+gate has **not** passed. Offline experiments are not a working desktop product.
 
-Preferred architectural direction:
+- [Architecture and Phase 1 implementation order](docs/ARCHITECTURE.md)
+- [Research, alternatives, test results and physical-device acceptance](docs/PHASE0_RESEARCH.md)
+- [Third-party licensing and distribution gates](docs/THIRD_PARTY.md)
+- [Official source register](docs/SOURCES.md)
+- [Experimental protocol/geometry/decode lab](experiments/phase0/README.md)
 
-```text
-Desktop UI
-   │
-   ├─ Device / Wireless ADB layer
-   ├─ Screen streaming layer
-   ├─ Input capture layer
-   ├─ Mapping engine
-   └─ Profile / settings layer
-```
-
-These responsibilities should remain separated so that the transport, UI, or mapping implementation can evolve without forcing a full rewrite.
+UI, device lifecycle, protocol, media, PC input, mapping, profiles and diagnostics
+have explicit boundaries. No external scrcpy window is reparented into the app.
 
 ## Scope boundaries
 
@@ -178,7 +179,15 @@ Users are responsible for complying with the terms and policies of the games and
 
 **Phase 0 — Foundation & architecture**
 
-The repository is being initialized. Implementation should begin only after the critical architecture choices have been investigated and documented.
+Research, architecture decisions and offline validation are recorded. The lab has
+20 passing tests and a synthetic 24-frame software-decode probe. No Windows UI,
+installer or usable game mapping application exists yet.
+
+The first planned Phase 1 scope is a **minimal Windows/Android risk
+slice**: wireless pairing, in-app video, direct touch and a diagnostic multi-touch
+test. Hardware rendering, actual wireless latency, disconnect touch cleanup and
+exact redistributable dependency compliance remain open gates. Do not begin the
+full mapping editor until the relevant physical tests pass.
 
 ## Repository
 
