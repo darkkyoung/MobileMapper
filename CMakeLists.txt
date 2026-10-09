@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.25)
+project(MobileMapperMedia LANGUAGES CXX)
+if(NOT WIN32)
+  message(FATAL_ERROR "The D3D11 media target requires Windows")
+endif()
+enable_testing()
+add_subdirectory(src/MobileMapper.Media.Native)

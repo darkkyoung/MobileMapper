@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="src/MobileMapper.App/MobileMapper.App.csproj" />
+  <Project Path="src/MobileMapper.Core/MobileMapper.Core.csproj" />
+  <Project Path="src/MobileMapper.Device/MobileMapper.Device.csproj" />
+  <Project Path="src/MobileMapper.Scrcpy/MobileMapper.Scrcpy.csproj" />
+  <Project Path="src/MobileMapper.Media/MobileMapper.Media.csproj" />
+  <Project Path="tests/MobileMapper.Tests/MobileMapper.Tests.csproj" />
+</Solution>
