@@ -1,4 +1,4 @@
-# Third-party review — Phase 0
+# Third-party review — Phase 0 baseline and Phase 1 artifacts
 
 Reviewed 2026-10-08. This is an engineering inventory based on actual upstream
 license texts and the inspected artifact below. **No third-party production
@@ -94,3 +94,44 @@ The current commit distributes only original documentation and experimental Pyth
 Release readiness remains pending artifact-specific checks; this distinction is
 part of the architecture decision, not a claim that the selected technologies
 cannot be distributed.
+
+## Phase 1 actual dependencies (2026-10-09)
+
+The Phase 0 statements above describe that historical documentation-only commit.
+Phase 1 introduces NuGet/build dependencies and a developer artifact. No third-party
+binary is committed to Git. `dependencies.lock.json` pins the selected components;
+`artifact-manifest.json` generated inside each successful artifact hashes every
+shipped payload. `third-party/nuget-manifest.json` records exact resolved package
+versions/content hashes; component license/NOTICE/nuspec files are collected from
+that actual dependency closure. ADB is **not** redistributed; its earlier gate remains.
+
+| Component | Actual selection and artifact provenance | Developer packaging |
+| --- | --- | --- |
+| scrcpy server | 5.0.1, commit `a60891aea193d92e7e5c3942700eca63f9d19a5f`; upstream GitHub release server | Apache-2.0 LICENSE; SHA-256 `764eb6f79811d5211fe9df341120882ba9994c7a61b897d7bf3fb662e53bc536` checked at build and each launch |
+| FFmpeg | 9.0.2, vcpkg port 1, `avcodec` + `swscale`, default features disabled, shared x64-windows | LGPL-2.1-or-later; no GPL/nonfree/version3 features or external x264/x265. CPU decoder selects H.264. Upstream port enables other internal LGPL codecs/platform accelerators; this is not a hand-minimized H.264-only build. |
+| vcpkg | `0699a19d0c6386247ce50d4dedbb8217d484d536` | MIT build tool; exact full vcpkg source archive includes applied FFmpeg patches and build recipes. Build tools are not installed application dependencies. |
+| Windows App SDK | Microsoft.WindowsAppSDK NuGet 2.5.1 and its exact restored dependencies | **Binary NuGet terms are Microsoft Software License Terms**, not simply the repository's MIT. Inspected package `license.txt` §3(a)(i) permits files binplaced by the package in self-contained/framework-dependent apps; distribution requirements/restrictions still apply. Package licenses and NOTICEs accompany output. |
+| .NET runtime | .NET 10 self-contained win-x64 runtime selected by the installed supported SDK | MIT plus actual runtime third-party notices; preserve pack LICENSE and THIRD-PARTY-NOTICES, record exact resolved runtime/output hash. |
+| Microsoft.NET.Test.Sdk / xunit / VS adapter | 17.14.1 / 2.9.3 / 3.1.1 | Test/build only; not copied to developer app output. MIT upstream/package licenses. |
+| MSVC runtime | Current supported official x64 VC++ Redistributable, installed by user | Not bundled. Its separate Microsoft license/install flow applies. Windows D3D/DXGI DLLs come from the OS. |
+
+FFmpeg exact upstream archive:
+<https://github.com/ffmpeg/ffmpeg/archive/n9.0.2.tar.gz>.
+Expected SHA-512 from the pinned port:
+`21bf3fbcdfd2f41ea6edeab40433fecfe362b09ecaa177a652471b54f9357011b4f74dab18245ab1c26f1a473b94205490baecb42289afd2effd603cd0b22b59`.
+The archive plus exact vcpkg source (ports/ffmpeg contains the patch list/files),
+manifest and build scripts are included **inside the same developer ZIP**. This
+makes corresponding source available wherever the binary artifact is available,
+including cache-hit builds. Native tests inspect `avcodec_license/configuration`
+and reject GPL/nonfree/version3-enabled builds before packaging. DLLs remain
+replaceable, and no EULA restriction on debugging modifications to LGPL libraries
+is imposed. Release-market patent review and the owner's project license decision
+remain Phase 3 gates.
+
+Official license evidence: [FFmpeg legal](https://ffmpeg.org/legal.html),
+[pinned vcpkg port](https://github.com/microsoft/vcpkg/blob/0699a19d0c6386247ce50d4dedbb8217d484d536/ports/ffmpeg/portfile.cmake),
+[scrcpy LICENSE](https://github.com/Genymobile/scrcpy/blob/a60891aea193d92e7e5c3942700eca63f9d19a5f/LICENSE),
+[WindowsAppSDK 2.5.1 NuGet](https://www.nuget.org/packages/Microsoft.WindowsAppSDK/2.5.1).
+The actual WindowsAppSDK nupkg license and transitive notices take precedence over
+an inference from a repository badge. Developer artifacts are not a declaration
+that all public product release/signing/license-policy gates have been closed.

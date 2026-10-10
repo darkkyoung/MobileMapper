@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="../../dependencies.lock.json" LogicalName="dependencies.lock.json" />
     <ProjectReference Include="../MobileMapper.Core/MobileMapper.Core.csproj" />
     <ProjectReference Include="../MobileMapper.Device/MobileMapper.Device.csproj" />
+    <ProjectReference Include="../MobileMapper.Scrcpy/MobileMapper.Scrcpy.csproj" />
+    <ProjectReference Include="../MobileMapper.Media/MobileMapper.Media.csproj" />
   </ItemGroup>
 </Project>

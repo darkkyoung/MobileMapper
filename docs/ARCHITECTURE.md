@@ -446,3 +446,25 @@ record evidence and revisit only the affected decision. Most urgent risks are
 native GPU/WinUI composition, OEM input permissions, disconnect touch cleanup,
 ADB coexistence/discovery and exact binary-license provenance. The hardware test
 procedure and ownership are in [research](PHASE0_RESEARCH.md).
+
+## Phase 1 implementation addendum (2026-10-09)
+
+The selected architecture remains unchanged. Actual module boundaries, build and
+unverified device gates are in [PHASE1_IMPLEMENTATION.md](PHASE1_IMPLEMENTATION.md).
+Core houses the currently needed input/coordinates/diagnostics logic; Session
+orchestrates Device/Scrcpy/Media. Unused Mapping/Profile projects are not created.
+
+The first implementation uses CPU FFmpeg H.264 decode, a latest AVFrame slot,
+libswscale BGRA conversion and D3D11 texture upload on a dedicated presenter thread.
+D3D11VA is an extension point, not an implemented optimization. Phase 1 direct
+interaction uses WinUI pointer events; Raw Input belongs to later relative-input work.
+Compressed records are bounded by 8 records / 16 MiB queued bytes, with a 250 ms
+backlog deadline triggering a clean restart. Native display state is generation-gated.
+Input always resumes explicitly after focus/reconnect/rotation boundaries.
+
+An app-owned foreground ADB daemon listens on an ephemeral loopback port; no shared
+kill-server. Developer builds use a user-selected official Platform-Tools installation.
+FFmpeg is built as shared LGPL-only libraries using pinned vcpkg; runtime license and
+configure flags are checked by native tests. The developer package includes exact
+source archives, vcpkg patches/recipe, component notices and generated hashes.
+These implementation choices do not close physical input, latency or release gates.

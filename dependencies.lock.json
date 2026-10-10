@@ -1,0 +1,13 @@
+{
+  "scrcpy": {
+    "version": "5.0.1",
+    "commit": "a60891aea193d92e7e5c3942700eca63f9d19a5f",
+    "url": "https://github.com/Genymobile/scrcpy/releases/download/v5.0.1/scrcpy-server-v5.0.1",
+    "sha256": "764eb6f79811d5211fe9df341120882ba9994c7a61b897d7bf3fb662e53bc536",
+    "license": "Apache-2.0"
+  },
+  "vcpkg": { "commit": "0699a19d0c6386247ce50d4dedbb8217d484d536" },
+  "ffmpeg": { "version": "9.0.2", "features": ["avcodec", "swscale"], "linkage": "shared", "gpl": false, "nonfree": false, "version3": false },
+  "windowsAppSdk": { "version": "2.5.1" },
+  "adb": { "bundled": false, "mode": "user-selected official Windows Platform-Tools" }
+}

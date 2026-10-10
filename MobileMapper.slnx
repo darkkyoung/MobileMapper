@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="src/MobileMapper.Session/MobileMapper.Session.csproj" />
   <Project Path="src/MobileMapper.App/MobileMapper.App.csproj" />
   <Project Path="src/MobileMapper.Core/MobileMapper.Core.csproj" />
   <Project Path="src/MobileMapper.Device/MobileMapper.Device.csproj" />

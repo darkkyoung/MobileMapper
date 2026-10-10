@@ -192,3 +192,23 @@ full mapping editor until the relevant physical tests pass.
 ## Repository
 
 `darkkyoung/MobileMapper`
+
+## Phase 1 — Wireless Mirroring developer build
+
+The Windows solution now implements pairing/discovery, selected-device reconnect,
+custom scrcpy 5.0.1 video/control transport, a C++ FFmpeg/D3D11 SwapChainPanel path,
+direct mouse touch and a three-contact diagnostic. No Phase 2 mapping editor or
+profiles are included. **Physical Windows/Galaxy S26 acceptance is pending.**
+
+- [Implementation, exact Windows build procedure and verification status](docs/PHASE1_IMPLEMENTATION.md)
+- [Developer artifact / Galaxy S26 test procedure and PASS/FAIL checklist](docs/PHASE1_DEVICE_TEST.md)
+- [Windows CI](https://github.com/darkkyoung/MobileMapper/actions/workflows/windows-build.yml)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
+
+Use a successful current-main Windows build artifact, or run
+`pwsh -File scripts/build.ps1 -Configuration Release` with the documented Windows
+prerequisites. Start `artifacts/MobileMapper/MobileMapper.App.exe`. Official Android
+Platform-Tools and the Microsoft Visual C++ x64 Redistributable are user-installed;
+ADB is not bundled. The developer output includes corresponding FFmpeg source,
+patch/build recipes, notices and an artifact hash manifest. It is not a signed
+installer or a completed physical-device acceptance result.
