@@ -35,7 +35,7 @@ public sealed class MainWindow : Window
     private AdbRuntime? adb;
     private NativeMedia? media;
     private MirrorSession? session;
-    private Task? sessionTask;
+    private Task? sessionTask, operationTask;
     private UserSettings settings = UserSettings.Load();
     private bool busy, closing, closeReady, directHeld;
     private long directGeneration;
@@ -44,6 +44,7 @@ public sealed class MainWindow : Window
 
     public MainWindow()
     {
+        timer = DispatcherQueue.CreateTimer();
         Title = "MobileMapper — Wireless Mirroring (developer build)";
         AppWindow.Resize(new Windows.Graphics.SizeInt32(1280, 850));
         var root = new Grid { Padding = new Thickness(12), ColumnSpacing = 12 };
@@ -127,13 +128,14 @@ public sealed class MainWindow : Window
             e.Cancel = true;
             if (closing) return;
             closing = true; lifetime.Cancel();
+            if (operationTask is not null) { try { await operationTask; } catch (Exception) { } }
             await StopAsync();
             timer.Stop();
             if (media is not null) { panel.As<ISwapChainPanelNative>().SetSwapChain(0); media.Dispose(); media = null; }
             if (adb is not null) await adb.DisposeAsync();
             closeReady = true; Close();
         };
-        timer = DispatcherQueue.CreateTimer(); timer.Interval = TimeSpan.FromSeconds(1);
+        timer.Interval = TimeSpan.FromSeconds(1);
         timer.Tick += (_, _) => UpdateMetrics(); timer.Start();
         status.Text = "Idle — select official Platform-Tools, then refresh or pair.";
         UpdateControls();
@@ -151,8 +153,8 @@ public sealed class MainWindow : Window
     {
         var b = MakeButton(text, async () => {
             busy = true; UpdateControls();
-            try { await operation(); }
-            finally { busy = false; UpdateControls(); }
+            try { operationTask = operation(); await operationTask; }
+            finally { operationTask = null; busy = false; UpdateControls(); }
         });
         deviceButtons.Add(b); target.Children.Add(b);
     }

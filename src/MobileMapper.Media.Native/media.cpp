@@ -124,6 +124,12 @@ class Media {
                     draw(current.get(), w, h);
                     visible_w = current->width; visible_h = current->height;
                     visible_generation = current_generation;
+                } else {
+                    current.reset();
+                    const float black[4] = {0, 0, 0, 1};
+                    context->ClearRenderTargetView(target.Get(), black);
+                    check(chain->Present(1, 0));
+                    visible_w = 0; visible_h = 0; visible_generation = 0;
                 }
             }
         } catch (...) { error = -2; }
@@ -177,7 +183,7 @@ float4 pixel(V i) : SV_Target { return picture.Sample(linearSampler, i.uv); }
     void reset(uint64_t value) {
         std::lock_guard decode_guard(decode_mutex); avcodec_free_context(&decoder); config_bytes.clear();
         generation = value; visible_generation = 0;
-        std::lock_guard guard(queue_mutex); latest.reset();
+        std::lock_guard guard(queue_mutex); latest.reset(); resized = true; wake.notify_one();
     }
     void decode(const uint8_t* data, int length, int64_t pts, bool config) {
         std::lock_guard guard(decode_mutex);

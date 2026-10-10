@@ -177,17 +177,13 @@ Users are responsible for complying with the terms and policies of the games and
 
 ## Current status
 
-**Phase 0 — Foundation & architecture**
+**Phase 1 — Wireless Mirroring MVP implementation; physical acceptance pending.**
 
-Research, architecture decisions and offline validation are recorded. The lab has
-20 passing tests and a synthetic 24-frame software-decode probe. No Windows UI,
-installer or usable game mapping application exists yet.
-
-The first planned Phase 1 scope is a **minimal Windows/Android risk
-slice**: wireless pairing, in-app video, direct touch and a diagnostic multi-touch
-test. Hardware rendering, actual wireless latency, disconnect touch cleanup and
-exact redistributable dependency compliance remain open gates. Do not begin the
-full mapping editor until the relevant physical tests pass.
+Phase 0 research and offline experiments remain available. The repository now
+contains a Windows application, native media pipeline and managed tests. Windows
+verification status is recorded in [PHASE1_IMPLEMENTATION.md](docs/PHASE1_IMPLEMENTATION.md).
+No installer or Phase 2 key-mapping editor is included. Wireless performance,
+visible rendering and remote touch cleanup still require the device checklist.
 
 ## Repository
 

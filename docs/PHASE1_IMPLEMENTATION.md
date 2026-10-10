@@ -1,7 +1,6 @@
 # Phase 1 implementation — Wireless Mirroring MVP
 
-Status: implementation and 65 managed tests available; Windows CI verification in
-progress; **Windows interactive and Android physical acceptance NOT TESTED**.
+Status: implementation and Windows x64 build/test/publish verified; **Windows interactive and Android physical acceptance NOT TESTED**.
 No latency/FPS measurement or claim that pairing/touch works on Galaxy S26 follows
 from compilation. Phase 2 must wait for the device checklist.
 
@@ -86,7 +85,8 @@ five retries after the initial attempt and delays 1/2/4/8/15 seconds. A user
 Disconnect cancels the loop. After exhaustion, refresh/manual connection/pairing is
 required. OEM restrictions, secure content, Wi-Fi client isolation, blocked mDNS,
 private daemon coexistence and scrcpy hidden-API compatibility require device tests.
-A stopped private daemon requires app restart. A D3D device/presenter failure also
+A selected-device no-op shell heartbeat every two seconds has a three-second timeout
+to detect broken wireless transport even when the screen is static. A stopped private daemon requires app restart. A D3D device/presenter failure also
 requires app restart; device-lost recreation is not yet implemented.
 
 Diagnostics are session-bounded (200 log entries) and in-memory; no disk debug log,
@@ -122,14 +122,18 @@ CTest, managed tests and developer artifact upload. Device-free CI needs no secr
 The full solution is `MobileMapper.slnx`; the app project reference graph compiles
 all production managed modules, and the test project compiles/tests pure logic.
 
-Initial Windows run: https://github.com/darkkyoung/MobileMapper/actions/runs/37882378470
-(skeleton baseline; final implementation validation is recorded after completion).
+Verified full implementation run: https://github.com/darkkyoung/MobileMapper/actions/runs/38032973345
+at commit `056d5c02281c2906f17a76bf2d996b6eca6a84a3`: Windows x64 native build,
+CTest 1/1 (14 native assertions), managed tests 65/65, WinUI Release publish and
+`MobileMapper-win-x64-developer` artifact all succeeded. Subsequent safety/documentation
+commits must also pass the workflow; use the successful run for the current main SHA.
+Initial skeleton run 37882378470 had no managed test cases and is not MVP evidence.
 A green compile does not mean a WinUI window was interactively launched in CI.
 
 ## Test evidence
 
 - Linux .NET 10: 65/65 managed tests passed; no skipped tests (initial implementation).
-- Windows C++: native test program checks ABI/errors, runtime LGPL/config flags,
+- Windows C++: CTest 1/1 passed (14 assertions). The native test program checks ABI/errors, runtime LGPL/config flags,
   WARP D3D11 composition swapchain creation, synthetic H.264 decode, ownership/reset.
   This is headless validation, not SwapChainPanel/device acceptance.
 - Phase 0 Python experiments remain executable specifications, not production deps.

@@ -20,6 +20,8 @@ Download-Checked 'https://github.com/ffmpeg/ffmpeg/archive/n9.0.2.tar.gz' "$sour
 if ($LASTEXITCODE -ne 0) { throw 'Cannot package the exact vcpkg source/build patches.' }
 Copy-Item "$root/build/native/vcpkg_installed/x64-windows/share/ffmpeg/copyright" "$notices/FFmpeg-copyright.txt"
 Copy-Item "$root/dependencies.lock.json","$root/vcpkg.json","$root/global.json","$root/scripts/build.ps1","$root/scripts/package-developer.ps1" $source
+$nativeEvidence = Get-Content "$root/build/native/Testing/Temporary/LastTest.log" -Raw
+$nativeEvidence.Replace($root, '<CHECKOUT>').Replace($root.Replace('\','/'), '<CHECKOUT>') | Set-Content "$third/native-build-evidence.txt"
 # Capture license/NOTICE files from the actual NuGet dependency closure, not unrelated cached packages.
 $assets = Get-Content "$root/src/MobileMapper.App/obj/project.assets.json" -Raw | ConvertFrom-Json
 $packageFolders = @($assets.packageFolders.PSObject.Properties.Name)

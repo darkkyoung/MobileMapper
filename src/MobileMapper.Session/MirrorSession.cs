@@ -29,11 +29,17 @@ public sealed class MirrorSession(AdbRuntime adb, NativeMedia media, string serv
     private void StateTo(SessionState state)
     { machine.MoveTo(state); Log.Add("session", state.ToString()); Changed?.Invoke(); }
     public void RequestStop() => runCancellation?.Cancel();
+    private bool IsDisplayed(VideoGeometry g)
+    {
+        var displayed = media.Stats;
+        return displayed.Error == 0 && displayed.Generation == (ulong)g.Generation &&
+            displayed.Width == g.Width && displayed.Height == g.Height;
+    }
     public void Arm()
     {
         lock (inputLock)
         {
-            if (State != SessionState.Streaming || writer is null || geometry is not { } g || media.Stats.Generation != (ulong)g.Generation)
+            if (State != SessionState.Streaming || writer is null || geometry is not { } g || !IsDisplayed(g))
                 throw new InvalidOperationException("Wait for a current video frame before enabling touch.");
             touches.Arm();
         }
@@ -44,7 +50,7 @@ public sealed class MirrorSession(AdbRuntime adb, NativeMedia media, string serv
         lock (inputLock)
         {
             if (!touches.Enabled || expectedGeneration != touches.Generation || writer is null || geometry is not { } g ||
-                media.Stats.Generation != (ulong)g.Generation) return false;
+                !IsDisplayed(g)) return false;
             TouchFrame? frame = action switch
             {
                 TouchAction.Down => touches.Down(owner, point, g, expectedGeneration),
@@ -144,6 +150,8 @@ public sealed class MirrorSession(AdbRuntime adb, NativeMedia media, string serv
                 long currentEpoch = 0;
                 while (true) {
                     var record = await packets.ReadAsync(lifetime.Token);
+                    Interlocked.Exchange(ref Counters.QueuedBytes, packets.Bytes);
+                    Interlocked.Exchange(ref Counters.QueueDepth, packets.Count);
                     if (record is GeometryRecord changed) {
                         bool hadContacts; lock (inputLock) hadContacts = touches.Count != 0;
                         await ReleaseAsync();
@@ -164,9 +172,14 @@ public sealed class MirrorSession(AdbRuntime adb, NativeMedia media, string serv
             writeTask,
             TouchProtocol.DrainDeviceMessagesAsync(connection.Control, lifetime.Token),
             Task.Run(async () => {
+                int heartbeatTicks = 0;
                 while (true) {
                     await Task.Delay(200, lifetime.Token);
                     if (connection.ServerExited || !adb.IsAlive) throw new IOException("The Android or ADB server stopped.");
+                    if (++heartbeatTicks >= 10) {
+                        heartbeatTicks = 0;
+                        AdbClient.Check(await adb.Client.SelectedAsync(serial, ["shell", "true"], lifetime.Token, TimeSpan.FromSeconds(3)));
+                    }
                     if (media.Stats.Error != 0) throw new InvalidOperationException("The native presenter failed. Restart MobileMapper and check the graphics driver.");
                 }
             }),
@@ -180,6 +193,7 @@ public sealed class MirrorSession(AdbRuntime adb, NativeMedia media, string serv
             lifetime.Cancel();
             // The cancellation task belongs to the parent; do not await it on a spontaneous stream failure.
             try { await Task.WhenAll(tasks.Take(tasks.Length - 1)); } catch (Exception) { }
+            media.Reset(Interlocked.Increment(ref geometryEpoch));
             Interlocked.Exchange(ref Counters.QueueDepth, 0); Interlocked.Exchange(ref Counters.QueuedBytes, 0);
         }
     }
